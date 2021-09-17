@@ -1,6 +1,6 @@
 # Microservices Go gRPC
 
-[Deployed in EC2, Check it out!](http://ec2-18-192-156-217.eu-central-1.compute.amazonaws.com/)
+[Deployed, Check it out!](https://go-grpc.uid4oe.dev/)
 
 For more context, please read the [Medium Story](https://itnext.io/bff-pattern-with-go-microservices-using-rest-grpc-87d269bc2434) before checking the code
 
