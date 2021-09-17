@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package advicepb;
+option go_package = "./;advicepb";
+
+import "timestamp.proto";
+
+enum Operation {
+    CREATE = 0;
+    UPDATE = 1;
+}
+
+message GetUserAdviceRequest{
+    string user_id = 1;
+}
+
+message GetUserAdviceResponse{
+    string advice = 1;
+    google.protobuf.Timestamp created_at = 2; 
+}
+
+message CreateUpdateAdviceRequest{
+    Operation operation = 1;
+    string user_id = 2;
+    string advice = 3;
+}
+
+message CreateUpdateAdviceResponse{
+
+}
+
+
+service AdviceService{
+    rpc GetAdvice(GetUserAdviceRequest) returns (GetUserAdviceResponse) {};
+    rpc CreateUpdateAdvice(CreateUpdateAdviceRequest) returns (CreateUpdateAdviceResponse) {};
+}

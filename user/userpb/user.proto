@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package userpb;
+option go_package = "./;userpb";
+
+enum Operation {
+    CREATE = 0;
+    UPDATE = 1;
+}
+
+message GetUserDetailsRequest{
+    string id = 1;
+}
+
+message GetUserDetailsResponse{
+    int32 salary = 1;
+    string power = 2;
+}
+
+message CreateUpdateUserRequest{
+    Operation operation = 1;
+    string id = 2;
+    string name = 3;
+    int32 age = 4; 
+    string greeting = 5;
+    int32 salary = 6;
+    string power = 7;
+}
+
+message CreateUpdateUserResponse{
+    string id = 1;
+}
+
+message GetUsersRequest{}
+
+message GetUserResponse{
+    string id = 1;
+    string name = 2;
+    int32 age = 3; 
+    string greeting = 4;
+}
+message GetUsersResponse{
+    repeated GetUserResponse users = 1;
+}
+
+service UserService{
+    rpc GetUserDetails(GetUserDetailsRequest) returns (GetUserDetailsResponse) {};
+    rpc GetUsers(GetUsersRequest) returns (GetUsersResponse) {};
+    rpc CreateUpdateUser(CreateUpdateUserRequest) returns (CreateUpdateUserResponse) {};
+}

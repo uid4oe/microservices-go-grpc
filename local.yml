@@ -1,0 +1,51 @@
+version: "3.7"
+
+services:
+  ui:
+    container_name: "ui"
+    image: uid4oe/ms-grpc-ui:latest
+    networks:
+      - uid4oe
+    ports:
+      - 3000:80
+  mongodb:
+    container_name: "mongodb"
+    image: mongo:latest
+    hostname: mongodb
+    restart: always
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - mongodb:/data/db
+      - mongoconfig:/data/configdb
+    env_file:
+      - .env
+    networks:
+      - uid4oe
+    ports:
+      - 27017:27017
+  postgres:
+    container_name: "postgres"
+    image: postgres:latest
+    hostname: postgres
+    user: postgres
+    restart: always
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./advice.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    env_file:
+      - .env
+    networks:
+      - uid4oe
+    command: 'postgres'
+    ports:
+      - '5432:5432'
+
+
+volumes:
+  mongodb:
+  mongoconfig:
+  postgres:
+
+networks:
+  uid4oe:
+    external: true

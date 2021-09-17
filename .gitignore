@@ -1,0 +1,10 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+
+
+build_images.bat
+.DS_Store
+bff/Dockerfile
+user/Dockerfile
+advice/Dockerfile
+
