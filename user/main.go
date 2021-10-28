@@ -9,15 +9,13 @@ import (
 	"github.com/uid4oe/microservices-go-grpc/user/userdb"
 	"github.com/uid4oe/microservices-go-grpc/user/userpb"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 var (
-	timeout      = time.Second
-	mongo_client *mongo.Client
+	timeout = time.Second
 )
 
 type server struct {
@@ -41,7 +39,7 @@ func (*server) CreateUpdateUser(ctx context.Context, req *userpb.CreateUpdateUse
 		}
 	}
 
-	err := userdb.UpsertOne(mongo_client, c, &userdb.User{
+	err := userdb.UpsertOne(c, &userdb.User{
 		Id: uid, Name: req.Name,
 		Age: req.Age, Greeting: req.Greeting,
 		Salary: req.Salary, Power: req.Power})
@@ -63,7 +61,7 @@ func (*server) GetUserDetails(ctx context.Context, req *userpb.GetUserDetailsReq
 		return nil, error_response(err)
 	}
 
-	result, err := userdb.FindOne(mongo_client, c, uid)
+	result, err := userdb.FindOne(c, uid)
 	if err != nil {
 		return nil, error_response(err)
 	}
@@ -77,7 +75,7 @@ func (*server) GetUsers(ctx context.Context, req *userpb.GetUsersRequest) (*user
 	c, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
-	data, err := userdb.Find(mongo_client, c)
+	data, err := userdb.Find(c)
 
 	if err != nil {
 		return nil, error_response(err)
@@ -104,11 +102,11 @@ func main() {
 		log.Println("ERROR:", err.Error())
 	}
 
-	mongo_client, err = userdb.NewClient(context.Background())
+	userdb.Mongo_Client, err = userdb.NewClient(context.Background())
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	defer mongo_client.Disconnect(context.Background())
+	defer userdb.Mongo_Client.Disconnect(context.Background())
 
 	s := grpc.NewServer()
 	userpb.RegisterUserServiceServer(s, &server{})

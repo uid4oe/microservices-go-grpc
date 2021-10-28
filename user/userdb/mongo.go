@@ -31,6 +31,8 @@ var (
 	addr = GetEnv("MONGO_CONN")
 )
 
+var Mongo_Client *mongo.Client
+
 func NewClient(ctx context.Context) (*mongo.Client, error) {
 	client, err := mongo.Connect(ctx,
 		options.Client().ApplyURI(addr).
@@ -49,9 +51,9 @@ func NewClient(ctx context.Context) (*mongo.Client, error) {
 	return client, nil
 }
 
-func UpsertOne(client *mongo.Client, ctx context.Context, user *User) error {
+func UpsertOne(ctx context.Context, user *User) error {
 
-	collection := client.Database(db).Collection(coll)
+	collection := Mongo_Client.Database(db).Collection(coll)
 
 	opts := options.Update().SetUpsert(true)
 	filter := bson.M{"_id": user.Id}
@@ -62,9 +64,9 @@ func UpsertOne(client *mongo.Client, ctx context.Context, user *User) error {
 	return err
 }
 
-func FindOne(client *mongo.Client, ctx context.Context, id primitive.ObjectID) (*User, error) {
+func FindOne(ctx context.Context, id primitive.ObjectID) (*User, error) {
 
-	collection := client.Database(db).Collection(coll)
+	collection := Mongo_Client.Database(db).Collection(coll)
 
 	var data User
 	err := collection.FindOne(ctx, bson.M{"_id": id}).Decode(&data)
@@ -74,9 +76,9 @@ func FindOne(client *mongo.Client, ctx context.Context, id primitive.ObjectID) (
 	return &data, nil
 }
 
-func Find(client *mongo.Client, ctx context.Context) (*[]User, error) {
+func Find(ctx context.Context) (*[]User, error) {
 
-	collection := client.Database(db).Collection(coll)
+	collection := Mongo_Client.Database(db).Collection(coll)
 
 	var data []User
 	cursor, err := collection.Find(ctx, bson.M{})
